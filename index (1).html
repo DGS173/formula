@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Formulaire d’informations</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF3F5; --card:#FFFFFF; --ink:#12202B; --muted:#5B6B77;
+  --line:#C9D4DB; --accent:#0F5C5A; --accent-ink:#FFFFFF; --err:#B3261E; --ok:#1B6B3A;
+}
+@media (prefers-color-scheme:dark){
+  :root{ --bg:#0E1A21; --card:#16262F; --ink:#E8EFF3; --muted:#9FB1BC;
+    --line:#2C424E; --accent:#3FB5AE; --accent-ink:#06201F; --err:#FF8A80; --ok:#7FDCA0; }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  line-height:1.5;min-height:100vh}
+.top{display:flex;justify-content:flex-end;align-items:center;gap:.6rem;
+  padding:.8rem 1rem;background:var(--card);border-bottom:1px solid var(--line);
+  position:sticky;top:0;z-index:5}
+.top label{font-size:.85rem;color:var(--muted)}
+.top select{font:inherit;font-size:.95rem;padding:.45rem .6rem;border:1px solid var(--line);
+  border-radius:8px;background:var(--bg);color:var(--ink)}
+main{max-width:640px;margin:0 auto;padding:1.6rem 1rem 3rem}
+h1{font-size:clamp(1.7rem,6vw,2.3rem);font-weight:800;letter-spacing:-.02em;margin:.4rem 0 .4rem}
+.lead{color:var(--muted);margin:0 0 1.6rem}
+form{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:1.3rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.full{grid-column:1/-1}
+@media(max-width:520px){.grid{grid-template-columns:1fr}}
+.field label{display:block;font-weight:600;font-size:.92rem;margin-bottom:.3rem}
+input,select{width:100%;font:inherit;font-size:1rem;color:var(--ink);background:var(--bg);
+  border:1px solid var(--line);border-radius:9px;padding:.7rem .75rem;min-height:46px}
+input:focus,select:focus,button:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
+.phone{display:flex;gap:.5rem}
+.phone select{flex:0 0 138px;width:138px}
+.phone input{flex:1;min-width:0}
+.salary{display:flex;gap:.5rem}
+.salary input{flex:1;min-width:0}
+.salary select{flex:0 0 96px;width:96px}
+.hp{position:absolute;left:-9999px;opacity:0;height:0;width:0}
+button{width:100%;margin-top:1.3rem;font:inherit;font-weight:700;font-size:1.05rem;
+  background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;
+  padding:.9rem 1rem;min-height:50px;cursor:pointer}
+button[disabled]{opacity:.6;cursor:wait}
+.msg{display:none;margin-top:1rem;padding:.8rem 1rem;border-radius:9px;font-weight:600}
+.msg.ok{display:block;background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok)}
+.msg.err{display:block;background:color-mix(in srgb,var(--err) 14%,transparent);color:var(--err)}
+.note{font-size:.82rem;color:var(--muted);margin-top:1rem}
+[dir="rtl"] .top{justify-content:flex-start}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <label for="lang" id="langLabel">Langue</label>
+  <select id="lang" aria-label="Language">
+    <option value="fr">Français</option>
+    <option value="en">English</option>
+    <option value="es">Español</option>
+    <option value="pt">Português</option>
+    <option value="de">Deutsch</option>
+    <option value="ar">العربية</option>
+  </select>
+</div>
+
+<main>
+  <h1 id="title"></h1>
+  <p class="lead" id="lead"></p>
+
+  <form id="form" novalidate>
+    <div class="grid">
+      <div class="field">
+        <label for="nom" id="l_nom"></label>
+        <input id="nom" name="Nom de famille" type="text" autocomplete="family-name" required>
+      </div>
+      <div class="field">
+        <label for="prenom" id="l_prenom"></label>
+        <input id="prenom" name="Prénom" type="text" autocomplete="given-name" required>
+      </div>
+      <div class="field">
+        <label for="pays" id="l_pays"></label>
+        <select id="pays" name="Pays" required></select>
+      </div>
+      <div class="field">
+        <label for="ville" id="l_ville"></label>
+        <input id="ville" name="Ville" type="text" autocomplete="address-level2" required>
+      </div>
+      <div class="field full">
+        <label for="profession" id="l_profession"></label>
+        <input id="profession" name="Profession" type="text" autocomplete="organization-title" required>
+      </div>
+      <div class="field full">
+        <label for="salaire" id="l_salaire"></label>
+        <div class="salary">
+          <input id="salaire" type="number" inputmode="decimal" min="0" step="any" required>
+          <select id="devise" aria-label="Currency">
+            <option>XOF</option><option>EUR</option><option>USD</option><option>GBP</option>
+            <option>CAD</option><option>CHF</option><option>NGN</option><option>GHS</option>
+            <option>MAD</option><option>DZD</option><option>TND</option><option>XAF</option>
+            <option>BRL</option><option>AED</option>
+          </select>
+        </div>
+      </div>
+      <div class="field full">
+        <label for="tel" id="l_tel"></label>
+        <div class="phone">
+          <select id="indicatif" aria-label="Country code"></select>
+          <input id="tel" type="tel" inputmode="tel" autocomplete="tel-national" required>
+        </div>
+      </div>
+      <div class="field full">
+        <label for="email" id="l_email"></label>
+        <input id="email" name="Email" type="email" autocomplete="email" required>
+      </div>
+    </div>
+
+    <input class="hp" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+    <button type="submit" id="btn"></button>
+    <div id="msg" class="msg" role="status" aria-live="polite"></div>
+    <p class="note" id="note"></p>
+  </form>
+</main>
+
+<script>
+/* ====== CONFIGURATION ====== */
+const DESTINATION_EMAIL = "lapatience195@gmail.com";
+
+/* ====== TRADUCTIONS ====== */
+const T = {
+  fr:{langLabel:"Langue",title:"Vos informations",lead:"Remplissez ce formulaire. Vos informations seront transmises directement.",
+    nom:"Nom de famille",prenom:"Prénom",pays:"Pays",ville:"Ville",profession:"Profession",
+    salaire:"Salaire mensuel",tel:"Numéro de téléphone",email:"Adresse email",
+    choose:"Choisir un pays",btn:"Envoyer",sending:"Envoi en cours…",
+    ok:"Merci ! Vos informations ont bien été envoyées.",
+    err:"L’envoi a échoué. Vérifiez votre connexion et réessayez.",
+    invalid:"Veuillez remplir tous les champs correctement.",
+    note:"Vos données sont utilisées uniquement pour traiter votre demande."},
+  en:{langLabel:"Language",title:"Your information",lead:"Fill in this form. Your details will be sent directly.",
+    nom:"Last name",prenom:"First name",pays:"Country",ville:"City",profession:"Occupation",
+    salaire:"Monthly income",tel:"Phone number",email:"Email address",
+    choose:"Select a country",btn:"Submit",sending:"Sending…",
+    ok:"Thank you! Your information has been sent.",
+    err:"Sending failed. Check your connection and try again.",
+    invalid:"Please fill in all fields correctly.",
+    note:"Your data is used only to process your request."},
+  es:{langLabel:"Idioma",title:"Sus datos",lead:"Complete este formulario. Sus datos se enviarán directamente.",
+    nom:"Apellido",prenom:"Nombre",pays:"País",ville:"Ciudad",profession:"Profesión",
+    salaire:"Ingreso mensual",tel:"Número de teléfono",email:"Correo electrónico",
+    choose:"Elegir un país",btn:"Enviar",sending:"Enviando…",
+    ok:"¡Gracias! Sus datos se han enviado.",
+    err:"No se pudo enviar. Revise su conexión e inténtelo de nuevo.",
+    invalid:"Complete todos los campos correctamente.",
+    note:"Sus datos se utilizan solo para tramitar su solicitud."},
+  pt:{langLabel:"Idioma",title:"Suas informações",lead:"Preencha este formulário. Seus dados serão enviados diretamente.",
+    nom:"Sobrenome",prenom:"Nome",pays:"País",ville:"Cidade",profession:"Profissão",
+    salaire:"Renda mensal",tel:"Número de telefone",email:"Endereço de e-mail",
+    choose:"Escolher um país",btn:"Enviar",sending:"Enviando…",
+    ok:"Obrigado! Suas informações foram enviadas.",
+    err:"O envio falhou. Verifique sua conexão e tente novamente.",
+    invalid:"Preencha todos os campos corretamente.",
+    note:"Seus dados são usados apenas para processar seu pedido."},
+  de:{langLabel:"Sprache",title:"Ihre Angaben",lead:"Füllen Sie dieses Formular aus. Ihre Angaben werden direkt übermittelt.",
+    nom:"Nachname",prenom:"Vorname",pays:"Land",ville:"Stadt",profession:"Beruf",
+    salaire:"Monatliches Einkommen",tel:"Telefonnummer",email:"E-Mail-Adresse",
+    choose:"Land auswählen",btn:"Absenden",sending:"Wird gesendet…",
+    ok:"Danke! Ihre Angaben wurden gesendet.",
+    err:"Senden fehlgeschlagen. Prüfen Sie Ihre Verbindung und versuchen Sie es erneut.",
+    invalid:"Bitte füllen Sie alle Felder korrekt aus.",
+    note:"Ihre Daten werden nur zur Bearbeitung Ihrer Anfrage verwendet."},
+  ar:{langLabel:"اللغة",title:"معلوماتك",lead:"املأ هذا النموذج. سيتم إرسال معلوماتك مباشرة.",
+    nom:"اسم العائلة",prenom:"الاسم الأول",pays:"الدولة",ville:"المدينة",profession:"المهنة",
+    salaire:"الدخل الشهري",tel:"رقم الهاتف",email:"البريد الإلكتروني",
+    choose:"اختر دولة",btn:"إرسال",sending:"جارٍ الإرسال…",
+    ok:"شكرًا لك! تم إرسال معلوماتك.",
+    err:"فشل الإرسال. تحقق من اتصالك وحاول مرة أخرى.",
+    invalid:"يرجى ملء جميع الحقول بشكل صحيح.",
+    note:"تُستخدم بياناتك فقط لمعالجة طلبك."}
+};
+
+/* ====== PAYS : code ISO → indicatif ====== */
+const COUNTRIES = ("BJ:229,TG:228,CI:225,SN:221,ML:223,BF:226,NE:227,GN:224,GW:245,GM:220,LR:231,SL:232,GH:233,NG:234,"
++"CM:237,TD:235,CF:236,CG:242,CD:243,GA:241,GQ:240,ST:239,AO:244,MG:261,MU:230,SC:248,KM:269,DJ:253,RW:250,BI:257,"
++"UG:256,KE:254,TZ:255,ET:251,SO:252,SD:249,SS:211,EG:20,LY:218,TN:216,DZ:213,MA:212,MR:222,CV:238,ZA:27,NA:264,"
++"BW:267,ZW:263,ZM:260,MW:265,MZ:258,LS:266,SZ:268,FR:33,BE:32,CH:41,LU:352,DE:49,IT:39,ES:34,PT:351,GB:44,IE:353,"
++"NL:31,AT:43,SE:46,NO:47,DK:45,FI:358,PL:48,CZ:420,RO:40,GR:30,TR:90,RU:7,UA:380,US:1,CA:1,MX:52,BR:55,AR:54,"
++"CL:56,CO:57,PE:51,VE:58,HT:509,DO:1,CU:53,JM:1,GP:590,MQ:596,GF:594,RE:262,AE:971,SA:966,QA:974,KW:965,LB:961,"
++"JO:962,IL:972,IQ:964,IR:98,IN:91,PK:92,BD:880,CN:86,JP:81,KR:82,VN:84,TH:66,MY:60,SG:65,ID:62,PH:63,AU:61,NZ:64")
+  .split(",").map(s=>{const [c,d]=s.split(":");return {iso:c,dial:d};});
+
+const flag = iso => String.fromCodePoint(...[...iso].map(ch=>127397+ch.charCodeAt(0)));
+const $ = id => document.getElementById(id);
+let lang = "fr";
+
+function countryName(iso){
+  try{ return new Intl.DisplayNames([lang],{type:"region"}).of(iso) || iso; }
+  catch(e){ return iso; }
+}
+
+function buildCountryLists(){
+  const selPays = $("pays").value || "BJ";
+  const selDial = $("indicatif").value || "BJ";
+  const sorted = COUNTRIES
+    .map(c=>({...c,name:countryName(c.iso)}))
+    .sort((a,b)=>a.name.localeCompare(b.name,lang));
+
+  $("pays").innerHTML = `<option value="" disabled>${T[lang].choose}</option>` +
+    sorted.map(c=>`<option value="${c.iso}">${flag(c.iso)} ${c.name}</option>`).join("");
+  $("pays").value = selPays;
+
+  $("indicatif").innerHTML = sorted
+    .map(c=>`<option value="${c.iso}" data-dial="${c.dial}">${flag(c.iso)} +${c.dial} ${c.name}</option>`).join("");
+  $("indicatif").value = selDial;
+}
+
+function applyLang(l){
+  lang = l;
+  const t = T[l];
+  document.documentElement.lang = l;
+  document.documentElement.dir = l==="ar" ? "rtl" : "ltr";
+  document.title = t.title;
+  $("langLabel").textContent = t.langLabel;
+  $("title").textContent = t.title;
+  $("lead").textContent = t.lead;
+  ["nom","prenom","pays","ville","profession","salaire","tel","email"].forEach(k=>$("l_"+k).textContent=t[k]);
+  $("btn").textContent = t.btn;
+  $("note").textContent = t.note;
+  buildCountryLists();
+  try{ localStorage.setItem("lang",l); }catch(e){}
+}
+
+/* Choisir un pays met à jour l’indicatif automatiquement */
+$("pays").addEventListener("change",()=>{ $("indicatif").value = $("pays").value; });
+
+$("lang").addEventListener("change",e=>applyLang(e.target.value));
+
+/* Langue initiale : choix précédent, sinon langue du navigateur */
+(function init(){
+  let l = null;
+  try{ l = localStorage.getItem("lang"); }catch(e){}
+  if(!l || !T[l]){
+    const nav = (navigator.language||"fr").slice(0,2).toLowerCase();
+    l = T[nav] ? nav : "fr";
+  }
+  $("pays").value = "BJ"; $("indicatif").value = "BJ";
+  $("lang").value = l;
+  applyLang(l);
+  $("pays").value = "BJ"; $("indicatif").value = "BJ";
+})();
+
+/* ====== ENVOI ====== */
+$("form").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const msg = $("msg"), btn = $("btn"), t = T[lang];
+  msg.className = "msg";
+
+  if(!$("form").checkValidity() || !$("pays").value){
+    msg.textContent = t.invalid; msg.className = "msg err";
+    $("form").reportValidity();
+    return;
+  }
+
+  const opt = $("indicatif").selectedOptions[0];
+  const payload = {
+    "Nom de famille": $("nom").value.trim(),
+    "Prénom": $("prenom").value.trim(),
+    "Pays": countryName($("pays").value),
+    "Ville": $("ville").value.trim(),
+    "Profession": $("profession").value.trim(),
+    "Salaire mensuel": $("salaire").value + " " + $("devise").value,
+    "Téléphone": "+" + opt.dataset.dial + " " + $("tel").value.trim(),
+    "Email": $("email").value.trim(),
+    "Langue du visiteur": lang,
+    "_subject": "Nouveau formulaire : " + $("prenom").value.trim() + " " + $("nom").value.trim(),
+    "_template": "table",
+    "_captcha": "false",
+    "_honey": document.querySelector("[name=_honey]").value
+  };
+
+  btn.disabled = true; btn.textContent = t.sending;
+  try{
+    const r = await fetch("https://formsubmit.co/ajax/" + DESTINATION_EMAIL,{
+      method:"POST",
+      headers:{"Content-Type":"application/json","Accept":"application/json"},
+      body: JSON.stringify(payload)
+    });
+    const data = await r.json();
+    if(r.ok && (data.success===true || data.success==="true")){
+      msg.textContent = t.ok; msg.className = "msg ok";
+      $("form").reset();
+      $("pays").value = "BJ"; $("indicatif").value = "BJ";
+    }else{ throw new Error(data.message||"error"); }
+  }catch(err){
+    msg.textContent = t.err; msg.className = "msg err";
+  }finally{
+    btn.disabled = false; btn.textContent = t.btn;
+  }
+});
+</script>
+</body>
+</html>
